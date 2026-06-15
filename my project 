@@ -1,0 +1,133 @@
+import sqlite3 
+
+def connect():
+   conn = sqlite3.connect("Students3.db")
+   return conn
+   
+def create_table():
+    conn = connect()
+    cursor = conn.cursor()
+    cursor.execute("CREATE TABLE IF NOT EXISTS students (roll_no INTEGER PRIMARY KEY, name TEXT NOT NULL, marks INTEGER, class_name INTEGER)")
+    conn.commit()
+    conn.close()
+    print("Table created successfully ! ")
+
+create_table()
+
+def add_student():
+    conn = connect()
+    cursor = conn.cursor()
+    roll_no = int(input("Enter roll number : "))
+    name = input("Enter your name : ")
+    marks = int(input("Enter marks : "))
+    class_name = (input("Enter your class : "))
+    try:
+       cursor.execute("INSERT INTO                        students      VALUES (?,?,?,?)" ,                     (roll_no
+        ,name,marks,       class_name))
+       conn.commit()
+       print("Student added successfully ! ")
+    except:
+        print("Error! Roll number already                   exists!")
+    conn.close()
+add_student()
+
+def view_students():
+    conn = connect()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM students")
+    students = cursor.fetchall()
+    if len(students) == 0:
+        print("No students found ! ")
+    else:            
+        print("roll_no,name,marks,class_name")
+        print("____________________")
+        for s in students:
+            print(s[0], "|" ,s[1], "|" ,s[2], "|" ,s[3])
+    conn.close()
+    
+view_students()
+
+def update_student():
+    conn = connect()
+    cursor = conn.cursor()
+    roll_no = int(input("Enter roll number to update : "))
+    new_name = input("Enter new name : ")
+    cursor.execute("UPDATE students SET name = ? WHERE roll_no = ?" , (new_name,roll_no))
+    conn.commit()
+    conn.close()
+    print("Name updated successfully ! ")
+    
+update_student()
+
+def search_student():
+    conn = connect()
+    cursor = conn.cursor()
+    roll_no = int(input("Enter roll number to search : "))
+    cursor.execute("SELECT * FROM students WHERE roll_no = ?", (roll_no,))
+    student = cursor.fetchone()
+    if student == None:
+        print("Student not found ! ")
+    else:
+        print("___________________")
+        print("roll_no : " , student[0])
+        print("name : " , student[1])
+        print("marks : " , student[2])
+        print("class_name : " , student[3])
+        print("__________________")
+    conn.close()
+create_table()
+search_student()
+
+def delete_student():
+    conn = connect()
+    cursor = conn.cursor()
+    roll_no = int(input("Enter roll number to deleted : "))
+    cursor.execute("SELECT * FROM students WHERE roll_no = ?" , (roll_no,))
+    student = cursor.fetchone()
+    if student == None:
+        print("Student not found ! ")
+    else:
+        print("Student found : " , student[1])
+        confirm = input("Are you sure?(yes/no) : ")
+    if confirm == "yes" :
+        cursor.execute("DELETE FROM students WHERE roll_no = ?", (roll_no,))
+        conn.commit()
+        print("Student deleted successfully ! ")
+    else:
+        print("Delete cancellation ! ")
+    conn.close()
+  
+delete_student()
+
+def main_menu():
+        create_table()
+        while True:
+            print("\n=================")
+            print("STUDENT MANAGEMENT SYSTEM")
+            print("===================")
+            print("1. add student")
+            print("2. view all students")
+            print("3. search student")
+            print("4. update student name")
+            print("5. delete student")
+            print("6. exist")
+            print("===================")
+choice = input("Enter your choice(1-6) : ")
+if choice == "1":
+    add_student()         # 1. add student
+elif choice == "2":
+    view_student()        # 2. view all students
+elif choice == "3":
+    search_student()      # 3. search student
+elif choice == "4":
+    update_student()      # 4. update student name
+elif choice == "5":
+    delete_student()      # 5. delete student
+elif choice == "6":
+    print("Thank you ! Good bye ! ")
+    # If this is inside a while loop, keep break. 
+    # If it's just a function, use exit() instead of break.
+
+main_menu()
+        
+    
